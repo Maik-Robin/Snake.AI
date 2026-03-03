@@ -1,0 +1,46 @@
+﻿<Window x:Class="Snake.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Snake"
+        mc:Ignorable="d"
+        Title="Snake Game" Height="520" Width="520"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterScreen"
+        KeyDown="Window_KeyDown"
+        Background="#1a1a2e">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Score bar -->
+        <Border Grid.Row="0" Background="#16213e">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+                <TextBlock x:Name="PlayerModeText" Text="HUMAN" FontSize="20" FontWeight="Bold"
+                           Foreground="#00e676" Margin="10,0"/>
+                <TextBlock x:Name="ScoreText" Text="Score: 0" FontSize="20" FontWeight="Bold"
+                           Foreground="#e94560" Margin="10,0"/>
+            </StackPanel>
+        </Border>
+
+        <!-- Game area -->
+        <Border Grid.Row="1" Margin="10" Background="#0f3460" CornerRadius="4">
+            <Grid>
+                <Canvas x:Name="GameCanvas" ClipToBounds="True"/>
+
+                <!-- Overlay for game over / start -->
+                <Border x:Name="OverlayPanel" Background="#AA000000" Visibility="Visible">
+                    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                        <TextBlock x:Name="OverlayTitle" Text="SNAKE GAME" FontSize="36" FontWeight="Bold"
+                                   Foreground="#e94560" HorizontalAlignment="Center"/>
+                        <TextBlock x:Name="OverlayMessage" Text="Press SPACE to start" FontSize="18"
+                                   Foreground="White" HorizontalAlignment="Center" Margin="0,10,0,0"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

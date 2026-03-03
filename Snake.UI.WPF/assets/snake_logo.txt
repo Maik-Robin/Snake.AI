@@ -1,0 +1,19 @@
+# Default Snake Logo
+
+To add a default snake logo that appears automatically when opening the TrainerWindow:
+
+1. Add an image file named `snake_logo.png` to this folder
+2. The image will be automatically displayed in the TrainerWindow
+3. Recommended size: 400x400 pixels
+
+## Creating a Snake Logo
+
+You can:
+- Design your own snake logo using any image editor
+- Download a free snake icon from sites like:
+  - Flaticon (https://www.flaticon.com)
+  - Icons8 (https://icons8.com)
+  - Noun Project (https://thenounproject.com)
+- Use AI image generators like DALL-E or Midjourney
+
+Make sure to respect licensing terms for any images you use.

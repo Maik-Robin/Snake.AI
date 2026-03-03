@@ -1,0 +1,102 @@
+<Window x:Class="Snake.AIVisionWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Snake"
+        xmlns:controls="clr-namespace:Snake.Controls"
+        mc:Ignorable="d"
+        Title="AI Vision - Snake Neural Network" 
+        Height="600" 
+        Width="900"
+        WindowStartupLocation="CenterScreen"
+        Background="#1a1a2e">
+    
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        
+        <!-- Header -->
+        <Border Grid.Row="0" 
+                Background="#16213e" 
+                CornerRadius="5" 
+                Padding="10" 
+                Margin="0,0,0,10">
+            <StackPanel>
+                <TextBlock Text="Neural Network Visualization" 
+                           FontSize="20" 
+                           FontWeight="Bold" 
+                           Foreground="#00e676" 
+                           HorizontalAlignment="Center"/>
+                <TextBlock Text="Real-time view of AI inputs and outputs" 
+                           FontSize="12" 
+                           Foreground="LightGray" 
+                           HorizontalAlignment="Center" 
+                           Margin="0,5,0,0"/>
+            </StackPanel>
+        </Border>
+        
+        <!-- AI Vision Control -->
+        <controls:AIVisionControl x:Name="VisionControl" 
+                                  Grid.Row="1"/>
+        
+        <!-- Footer / Controls -->
+        <Border Grid.Row="2" 
+                Background="#16213e" 
+                CornerRadius="5" 
+                Padding="10" 
+                Margin="0,10,0,0">
+            <StackPanel Orientation="Horizontal" 
+                        HorizontalAlignment="Center">
+                <Button x:Name="TestButton" 
+                        Content="Test Random Values" 
+                        Click="TestButton_Click"
+                        Width="150" 
+                        Height="35"
+                        Background="#e94560"
+                        Foreground="White"
+                        FontWeight="Bold"
+                        BorderThickness="0"
+                        Cursor="Hand"
+                        Margin="5">
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Background" Value="#e94560"/>
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Background" Value="#ff5670"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+                
+                <Button x:Name="ClearButton" 
+                        Content="Clear" 
+                        Click="ClearButton_Click"
+                        Width="100" 
+                        Height="35"
+                        Background="#0f3460"
+                        Foreground="White"
+                        FontWeight="Bold"
+                        BorderThickness="0"
+                        Cursor="Hand"
+                        Margin="5">
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Background" Value="#0f3460"/>
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Background" Value="#1a5080"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>
