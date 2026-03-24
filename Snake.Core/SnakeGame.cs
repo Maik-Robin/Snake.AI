@@ -1,8 +1,10 @@
 ﻿using Game.Core;
+using Snake.AI;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -15,7 +17,7 @@ namespace Snake.Core
     /// It provides methods to advance the game state, handle user input for direction changes, and reset the game.
     /// Events are raised to notify subscribers when the game updates or ends. This class is not thread-safe; all
     /// interactions should occur on the same thread.</remarks>
-    public class SnakeGame
+    public class SnakeGame : ISnakeGameEnvironment
     {
         /// <summary>
         /// Gets or sets the snake entity associated with the current game state.
@@ -48,6 +50,11 @@ namespace Snake.Core
         public bool EatsFood { get; set; }
 
         /// <summary>
+        /// Gets or sets the name associated with the object.
+        /// </summary>
+        public String Name { get; set; }
+
+        /// <summary>
         /// Event raised when the game state is updated, allowing subscribers to react to changes in the game.
         /// </summary>
         public event Action? GameUpdated;
@@ -74,14 +81,9 @@ namespace Snake.Core
         /// <remarks>The game starts with the snake and food spawned in the world. The initial score is
         /// set to 0, and the game is not over or won at initialization.</remarks>
         /// <param name="size">The size of the game world to create. Determines the dimensions of the playing area.</param>
-        public SnakeGame(SnakeWorld.SnakeWorldSize size)
+        public SnakeGame(SnakeWorld.SnakeWorldSize size) : this( Convert.ToInt32(size), Convert.ToInt32(size))
         {
-            World = new SnakeWorld(size);
-            Score = 0;
-            IsGameOver = false;
-            IsGameVictory = false;
-            SpawnSnake();
-            World.SpawnFood(Snake);
+                
         }
 
         /// <summary>
@@ -116,6 +118,26 @@ namespace Snake.Core
         {
             if (GameOver != null)
                 GameOver.Invoke();
+        }
+
+        /// <summary>
+        /// Gets a snapshot of the current state of the snake game, including the snake's position, the world layout,
+        /// whether the snake has just eaten food, and the current score.
+        /// </summary>
+        /// <remarks>The returned game state is a copy and is not affected by subsequent changes to the
+        /// game. Modifying the returned object does not alter the actual game state.</remarks>
+        /// <returns>A <see cref="SnakeGameState"/> object representing the current state of the game.</returns>
+        public SnakeGameState GetGameState()
+        {
+            return new SnakeGameState
+            {
+                Snake = this.Snake,
+                World = this.World,
+                EatsFood = this.EatsFood,
+                Score = this.Score,
+                IsGameOver = this.IsGameOver,
+                IsGameVictory = this.IsGameVictory
+            };
         }
 
         /// <summary>
@@ -170,16 +192,13 @@ namespace Snake.Core
             if (EatsFood)
             {
                 Score += 10;
-
-                //if (World.CanFoodSpawn(Snake))
-                //{
-                World.SpawnFood(Snake);
-                //}
-                //else
-                //{
-                //    IsGameOver = true;
-                //    IsGameVictory = true;
-                //}
+                var canFoodSpawn = World.SpawnFood(Snake);
+                if (!canFoodSpawn)
+                {
+                    IsGameOver = true;
+                    IsGameVictory = true;
+                    GameOver?.Invoke();
+                }
 
             }
             OnGameUpdated();
@@ -208,12 +227,26 @@ namespace Snake.Core
         public void ResetWorld()
         {
             var oldWorld = World;
-            World = new SnakeWorld(Convert.ToInt32(oldWorld.Size.X), Convert.ToInt32(oldWorld.Size.Y));
+            World = new SnakeWorld(Convert.ToInt32(oldWorld.Size.X+1), Convert.ToInt32(oldWorld.Size.Y+1));
             Score = 0;
             IsGameOver = false;
             SpawnSnake();
             World.SpawnFood(Snake);
         }
 
+        /// <inheritdoc/>
+        public SnakeGameState Step(Direction2D action)
+        {
+            ChangeDirection(action);
+            Tick();
+            return GetGameState();
+        }
+
+        /// <inheritdoc/>
+        public SnakeGameState Reset()
+        {
+            ResetWorld();
+            return GetGameState();
+        }
     }
 }

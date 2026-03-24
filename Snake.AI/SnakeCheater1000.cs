@@ -8,7 +8,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SnakeEngine.AI
+namespace Snake.AI
 {
     public class SnakeCheater1000 : ISnakeGameController
     {

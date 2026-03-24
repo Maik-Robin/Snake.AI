@@ -1,7 +1,6 @@
 ﻿using Game.Core;
 using Snake.AI;
 using Snake.Core;
-using SnakeEngine.AI;
 using System;
 using System.Diagnostics;
 using System.Linq;
@@ -13,7 +12,8 @@ namespace Snake.UI
     internal class SnakeGameUI: SnakeGame
     {
         public bool aiEnabled = false;
-        public ISnakeGameController aiController = new SnakeCheater1000();
+        //public ISnakeGameController aiController = new SnakeCheater1000();
+        public ISnakeGameController aiController;
         private readonly object _lock = new();
         private Thread? _gameThread;
         private volatile bool _running;
@@ -70,13 +70,7 @@ namespace Snake.UI
                     {
                         if (aiEnabled)
                         {
-                            var nextDirection = aiController.GetNextMove(new SnakeGameState
-                            {
-                                Snake = Snake,
-                                World = World,
-                                EatsFood = EatsFood,
-                                Score = Score
-                            });
+                            var nextDirection = aiController.GetNextMove(GetGameState());
                             ChangeDirection(nextDirection);
                         }
                         Tick();

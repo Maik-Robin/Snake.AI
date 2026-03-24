@@ -32,15 +32,15 @@ namespace Game.Core
         /// <summary>
         /// Turns the object to the left.
         /// </summary>
-        TurnLeft,
+        TurnLeft = 0,
         /// <summary>
         /// Represents the action or command to move straight forward.
         /// </summary>
-        StraightForward,
+        StraightForward = 1,
         /// <summary>
         /// Turns the object to the right.
         /// </summary>
-        TurnRight,
+        TurnRight = 2,
     }
 
 }

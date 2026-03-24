@@ -53,6 +53,13 @@ namespace Snake.Core
         /// </summary>
         public bool IsFoodSpawned { get { return _isFoodSpawned; } }
 
+        private Int32 _maxFields;
+
+        /// <summary>
+        /// Gets the maximum number of fields that can be processed / occupied
+        /// </summary>
+        public Int32 MaxFields { get { return _maxFields; } }
+
         /// <summary>
         /// Specifies the available world sizes for a snake game environment.
         /// </summary>
@@ -66,13 +73,14 @@ namespace Snake.Core
             Large = 30
         }
 
-        private void CalculateMidPoint()
+        private void CalculateVariables()
         {
             var xMod = (Convert.ToInt32(Size.X) & 1) == 0;
             var yMod = (Convert.ToInt32(Size.Y) & 1) == 0;
             var xMid = xMod ? Convert.ToInt32(Size.X) / 2 : (Convert.ToInt32(Size.X) - 1) / 2;
             var yMid = yMod ? Convert.ToInt32(Size.Y) / 2 : (Convert.ToInt32(Size.Y) - 1) / 2;
             _positionMidPoint = new Vector2(xMid, yMid);
+            _maxFields = Convert.ToInt32((PositionMax.X+1 / 1) * (PositionMax.Y+1 / 1));
         }
 
         /// <summary>
@@ -84,19 +92,16 @@ namespace Snake.Core
         {
             this.Name = "SnakeWorld";
             Size = new Vector2(sizeX-1, sizeY-1);
-            CalculateMidPoint();
+            CalculateVariables();
         }
 
         /// <summary>
         /// Initializes a new instance of the SnakeWorld class with the specified world size.
         /// </summary>
         /// <param name="worldSize">The size of the world, specified as a value of the SnakeWorldSize enumeration.</param>
-        public SnakeWorld(SnakeWorldSize worldSize)
-        {
-            this.Name = "SnakeWorld";
-            var size = Convert.ToInt64(worldSize);
-            Size = new Vector2(size-1, size-1); // always a square world, so both dimensions are the same
-            CalculateMidPoint();
+        public SnakeWorld(SnakeWorldSize worldSize) : this (Convert.ToInt32(worldSize), Convert.ToInt32(worldSize))
+        { 
+
         }
 
         /// <summary>
@@ -108,21 +113,15 @@ namespace Snake.Core
         /// <returns>true if the food was successfully spawned at a valid position; otherwise, false.</returns>
         public bool SpawnFood(SnakeEntity snake)
         {
-            //TOOD: Implement function to check if food can spawn
-            //var canFoodSpawn = CanFoodSpawn(snake);
-            var canFoodSpawn = true;
-
-            if (canFoodSpawn == false)
-            {
-                _isFoodSpawned = false;
+            if (snake.Body.Count() >= MaxFields)
                 return false;
-            }
 
             var newRandomVector = new Vector2(0, 0);
             do
             {
-                var randomX = Random.Shared.Next(Convert.ToInt32(PositionMin.X), Convert.ToInt32(PositionMax.X));
-                var randomY = Random.Shared.Next(Convert.ToInt32(PositionMin.Y), Convert.ToInt32(PositionMax.Y));
+                // the +1 is needed because the upper bound of Random.Next is exclusive, and we want to include PositionMax as a valid spawn point
+                var randomX = Random.Shared.Next(Convert.ToInt32(PositionMin.X), Convert.ToInt32(PositionMax.X+1)); 
+                var randomY = Random.Shared.Next(Convert.ToInt32(PositionMin.Y), Convert.ToInt32(PositionMax.Y+1));
                 newRandomVector = new Vector2(randomX, randomY);
             }
             while (snake.OccupiesCell(newRandomVector));

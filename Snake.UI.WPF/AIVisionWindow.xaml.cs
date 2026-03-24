@@ -26,8 +26,8 @@ namespace Snake
         /// <param name="selectedActionIndex">Index of the selected action.</param>
         public void UpdateVision(double[] inputs, double[] outputs, int selectedActionIndex = -1)
         {
-            //VisionControl.UpdateInputs(inputs, AIVisionLabels.GetSnakeInputLabels());
-            //VisionControl.UpdateOutputs(outputs, selectedActionIndex, AIVisionLabels.GetSnakeOutputLabels());
+            VisionControl.UpdateInputs(inputs, AIVisionLabels.GetSnakeInputLabels());
+            VisionControl.UpdateOutputs(outputs, selectedActionIndex, AIVisionLabels.GetSnakeOutputLabels());
         }
 
         private void TestButton_Click(object sender, RoutedEventArgs e)
