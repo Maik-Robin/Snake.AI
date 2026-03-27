@@ -121,7 +121,7 @@ var nextDirection = aiController.GetNextMove(gameState);
 
 ### Visualizing Neural Network Activity
 
-The AI Vision Control provides real-time visualization of neural network inputs and outputs. See [Snake.UI.WPF/Controls/AIVisionControl_README.md](Snake.UI.WPF/Controls/AIVisionControl_README.md) for detailed usage instructions.
+The AI Vision Control provides real-time visualization of neural network inputs and outputs.
 
 ## Testing
 
