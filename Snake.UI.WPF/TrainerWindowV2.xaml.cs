@@ -24,7 +24,7 @@ public partial class TrainerWindowV2 : Window
     /// Defines the available training algorithms.
     /// </summary>
     private enum AlgorithmMode { QLearning, NEAT }
-    private AlgorithmMode _mode = AlgorithmMode.QLearning;
+    private AlgorithmMode _mode = AlgorithmMode.NEAT;
 
     private bool _isTraining = false;
     private CancellationTokenSource? _cts;

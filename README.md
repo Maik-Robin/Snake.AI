@@ -88,12 +88,6 @@ public interface ISnakeGameController
 }
 ```
 
-### Dependencies
-
-- `Snake.AI` ? `Game.Core`, `Snake.Core`
-- `Snake.UI.WPF` ? `Snake.AI`, `Snake.Core`
-- `Snake.Core` ? `Game.Core`
-
 ## Usage Examples
 
 ### Implementing a Custom AI Controller
