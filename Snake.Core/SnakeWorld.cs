@@ -140,5 +140,16 @@ namespace Snake.Core
             return v.X < PositionMin.X || v.X > PositionMax.X  || v.Y < PositionMin.Y || v.Y > PositionMax.Y;
         }
 
+
+        /// <summary>
+        /// Determines whether the specified position is located on the boundary wall of the defined area.
+        /// </summary>
+        /// <param name="v">The position to check, represented as a <see cref="Vector2"/>.</param>
+        /// <returns>true if the position is on or outside the minimum or maximum X or Y boundaries; otherwise, false.</returns>
+        public bool IsWall(Vector2 v)
+        {
+            return v.X <= PositionMin.X || v.X >= PositionMax.X || v.Y <= PositionMin.Y || v.Y >= PositionMax.Y;
+        }
+
     }
 }

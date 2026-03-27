@@ -22,7 +22,10 @@ public static class AIVisionLabels
             "Food Down",
             "Direction: Up",
             "Direction: Right",
-            "Direction: Down"
+            "Direction: Down",
+            "Distance to Wall (Front)",
+            "Distance to Wall (Left)",
+            "Distance to Wall (Right)",
         };
     }
 

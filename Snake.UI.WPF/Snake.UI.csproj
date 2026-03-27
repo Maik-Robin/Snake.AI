@@ -13,4 +13,16 @@
     <ProjectReference Include="..\Snake.Core\Snake.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="assets\robot_bob.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="assets\robot_ken.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="assets\robot_lucy.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

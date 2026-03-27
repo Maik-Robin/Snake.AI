@@ -12,11 +12,14 @@ using System.Xml.Linq;
 
 namespace Snake.AI
 {
-    public static class StateEncoder
+    public static class StateEncoder_Org
     {
+        public static Int32 InputSize = 11;
+        public static Int32 OutputSize = 3;
+
         public static double[] Encode(SnakeGameState s)
         {
-            var state = new double[11];
+            var state = new double[InputSize];
             //Inputs(11 total):
             var currentDirection = s.Snake.CurrentDirection;
             var snakeHeadVector2= s.Snake.Head;
@@ -42,31 +45,10 @@ namespace Snake.AI
             var maxDistance = Math.Max(s.World.PositionMax.X, s.World.PositionMax.Y); // Max possible distance on the board
             var blockingFunction = new Func<Vector2, bool>(pos => s.Snake.OccupiesCell(pos));
 
-                                                                                          //Distance to nearest tail segment in front, left, and right(3 normalized inputs, 1 / distance)
-
+            //Distance to nearest tail segment in front, left, and right(3 normalized inputs, 1 / distance)
             state[3] = 1 / GetDistanceToTail(s, RelativeDirection2D.StraightForward, snakeHeadVector2);
             state[4] = 1 / GetDistanceToTail(s, RelativeDirection2D.TurnLeft, snakeHeadVector2);
             state[5] = 1 / GetDistanceToTail(s, RelativeDirection2D.TurnRight, snakeHeadVector2);
-
-
-            //var distanceStraight = Raycast(s, snakeHeadVector2, RelativeDirection2D.StraightForward, blockingFunction);
-            //var distanceLeft = Raycast(s, snakeHeadVector2, RelativeDirection2D.TurnLeft, blockingFunction);
-            //var distanceRight = Raycast(s, snakeHeadVector2, RelativeDirection2D.TurnRight, blockingFunction);
-
-
-            //state[3] =  distanceStraight.hit ? distanceStraight.distance / maxDistance : 0;
-            //state[4] =  distanceLeft.hit ? distanceLeft.distance / maxDistance : 0;
-            //state[5] = distanceRight.hit ? distanceRight.distance / maxDistance : 0;
-
-
-            //var distanceStraight = Raycast(s, snakeHeadVector2, RelativeDirection2D.StraightForward, blockingFunction);
-            //var distanceLeft = Raycast(s, snakeHeadVector2, RelativeDirection2D.TurnLeft, blockingFunction);
-            //var distanceRight = Raycast(s, snakeHeadVector2, RelativeDirection2D.TurnRight, blockingFunction);
-
-            
-            //state[3] =  distanceStraight.hit ? distanceStraight.distance / maxDistance  : -0.1;
-            //state[4] =  distanceLeft.hit ? distanceLeft.distance / maxDistance : -0.1;
-            //state[5] = distanceRight.hit ? distanceRight.distance / maxDistance : -0.1;
 
 
             //Food position relative to snake head(2 binary inputs: food right?, food below ?)
@@ -97,7 +79,9 @@ namespace Snake.AI
             var direction = Direction2DHelper.RelativeToDirection(s.Snake.CurrentDirection, relativeDirection);
             var delta = Direction2DHelper.DirectionDelta(direction);
             int distance = 1;
-            var maxDistance = Math.Max(Convert.ToDouble(s.World.PositionMax.X),Convert.ToDouble(s.World.PositionMax.Y));
+            int maxDistance = (int)MathF.Max(s.World.PositionMax.X, s.World.PositionMax.Y);
+
+            var body = s.Snake.Body; // cache: avoids repeated LinkedList.ToArray() allocations
 
             var x = startPosition.X + delta.X;
             var y = startPosition.Y + delta.Y;
@@ -107,9 +91,9 @@ namespace Snake.AI
                 if (x < 0 || x >= maxDistance || y < 0 || y >= maxDistance)
                     break;
 
-                for (int i = 1; i < s.Snake.Body.Length; i++)
+                for (int i = 1; i < body.Length; i++)
                 {
-                    if (s.Snake.Body[i].X == x && s.Snake.Body[i].Y == y)
+                    if (body[i].X == x && body[i].Y == y)
                     {
                         return distance;
                     }
@@ -123,48 +107,5 @@ namespace Snake.AI
             return maxDistance + 1;
         }
 
-        /// <summary>
-        /// Cast a ray from the given position in the specified direction until hitting an obstacle.
-        /// Returns the distance (number of cells) to the nearest obstacle (wall or snake body).
-        /// </summary>
-        /// <param name="s">The current game state</param>
-        /// <param name="startPosition">Starting position of the ray</param>
-        /// <param name="direction">Direction to cast the ray</param>
-        /// <param name="isBlocking">Function that determines if a position is blocking.</param>
-        /// <returns>Distance to the nearest obstacle in cells</returns>
-        public static (bool hit, int distance) Raycast(SnakeGameState s, Vector2 startPosition, Direction2D direction, Func<Vector2, bool>? isBlocking)
-        {
-            var maxRange = Math.Max(s.World.PositionMax.X, s.World.PositionMax.Y) + 1;
-            var delta = Direction2DHelper.DirectionDelta(direction);
-            var rayCastPos = new Vector2(startPosition.X + delta.X, startPosition.Y + delta.Y);
-            int distance = 1;
-            var hitObstacle = false;
-            do
-            {
-                if (isBlocking(rayCastPos))
-                {
-                    hitObstacle = true;
-                    break;
-                }
-                rayCastPos = new Vector2(rayCastPos.X + delta.X, rayCastPos.Y + delta.Y);
-                distance++;
-            } while (distance < maxRange);
-            return (hitObstacle, distance);
-        }
-
-        /// <summary>
-        /// Cast a ray from the given position in the specified relative direction until hitting an obstacle.
-        /// Returns the distance (number of cells) to the nearest obstacle (wall or snake body).
-        /// </summary>
-        /// <param name="s">The current game state</param>
-        /// <param name="startPosition">Starting position of the ray</param>
-        /// <param name="relativeDirection">Relative direction to cast the ray</param>
-        /// <param name="isBlocking">Function that determines if a position is blocking. If null, checks for walls and snake body.</param>
-        /// <returns>Distance to the nearest obstacle in cells</returns>
-        public static (bool hit, int distance) Raycast(SnakeGameState s, Vector2 startPosition, RelativeDirection2D relativeDirection, Func<Vector2, bool>? isBlocking)
-        {
-            var direction = Direction2DHelper.RelativeToDirection(s.Snake.CurrentDirection, relativeDirection);
-            return Raycast(s, startPosition, direction, isBlocking);
-        }
     }
 }

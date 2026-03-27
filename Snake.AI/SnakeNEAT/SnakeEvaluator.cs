@@ -1,4 +1,5 @@
 ﻿using Game.Core;
+using MicroNEAT.Core.Genome;
 using MicroNEAT.FitnessFunctions;
 using Snake.Core;
 using System;
@@ -10,11 +11,11 @@ namespace Snake.AI.SnakeNEAT
 {
     public class SnakeEvaluator : IFitnessFunction
     {
-        private readonly ISnakeGameEnvironment _env;
+        private readonly ISnakeGameEnvironment _envTemplate;
 
         public SnakeEvaluator(ISnakeGameEnvironment env)
         {
-            _env = env;
+            _envTemplate = env;
         }
 
         private double[] BuildInputs(SnakeGameState s)
@@ -22,15 +23,16 @@ namespace Snake.AI.SnakeNEAT
             return StateEncoder.Encode(s);
         }
 
-        public double CalculateFitness(global::MicroNEAT.Core.Genome.Genome genome)
+        public double CalculateFitness(Genome genome)
         {
-            return RunSingleEpisode(genome);
+            var env = _envTemplate.Clone();
+            return RunSingleEpisode(genome, env).fitness;
         }
-        private double RunSingleEpisode(global::MicroNEAT.Core.Genome.Genome genome)
+        private (double fitness, bool maxScore) RunSingleEpisode(Genome genome, ISnakeGameEnvironment env)
         {
-            var state = _env.Reset();
+            var state = env.Reset();
             double fitness = 0;
-            int steps = 0;
+            int totalSteps = 0;
             int sinceFood = 0;
             var maxSinceFood = 400; 
             while (!state.IsGameOver)
@@ -43,11 +45,11 @@ namespace Snake.AI.SnakeNEAT
                 var relDir = (RelativeDirection2D)bestIdx;
                 var dir = Direction2DHelper.RelativeToDirection(state.Snake.CurrentDirection, relDir);
                 // Step the game
-                var nextState = _env.Step(dir);
+                var nextState = env.Step(dir);
                 // Big food reward
                 if (state.EatsFood)
                 {
-                    fitness += 50;
+                    fitness += 10;
                     sinceFood = 0;
                 }
                 else
@@ -56,22 +58,22 @@ namespace Snake.AI.SnakeNEAT
                     if(sinceFood > maxSinceFood)
                     {
                         // Starvation penalty
-                        fitness -= 50;
+                        //fitness -= 50;
                         break;
                     }
                 }
                 // Death penalty
-                if (state.IsGameOver)
-                    fitness -= 100;
+                //if (state.IsGameOver)
+                //    fitness -= 100;
                 // Update
                 state = nextState;
-                steps++;
+                totalSteps++;
             }
 
             if (state.IsGameVictory)
                 fitness += 1000;
-
-            return fitness;
+            fitness += totalSteps * 0.01; // Small reward for lasting longer
+            return (fitness, state.IsGameVictory);
         }
 
         private static int ArgMax(double[] arr)
@@ -83,6 +85,10 @@ namespace Snake.AI.SnakeNEAT
             return idx;
         }
 
-
+        public (double fitness, bool maxScore) CalculateFitnessAndScore(Genome genome)
+        {
+            var env = _envTemplate.Clone();
+            return RunSingleEpisode(genome, env);
+        }
     }
 }

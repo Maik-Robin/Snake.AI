@@ -10,6 +10,14 @@ public interface IFitnessFunction
     /// Calculates the fitness score for a given genome.
     /// </summary>
     /// <param name="genome">The genome to evaluate.</param>
-    /// <returns>A fitness score, typically between 0 and 1, where higher is better.</returns>
+    /// <returns>A fitness score, where higher is better.</returns>
     double CalculateFitness(Core.Genome.Genome genome);
+
+
+    /// <summary>
+    /// Calculates the fitness score for a given genome and determines if it has achieved the maximum possible score.
+    /// </summary>
+    /// <param name="genome">The genome to evaluate.</param>
+    /// <returns>A fitness score, where higher is better and if maxScore was achived</returns>
+    (double fitness, bool maxScore) CalculateFitnessAndScore(Core.Genome.Genome genome);
 }

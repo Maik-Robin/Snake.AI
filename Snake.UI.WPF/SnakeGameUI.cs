@@ -12,8 +12,8 @@ namespace Snake.UI
     internal class SnakeGameUI: SnakeGame
     {
         public bool aiEnabled = false;
-        //public ISnakeGameController aiController = new SnakeCheater1000();
         public ISnakeGameController aiController;
+        public double[] aiRawOutput;
         private readonly object _lock = new();
         private Thread? _gameThread;
         private volatile bool _running;
@@ -22,11 +22,6 @@ namespace Snake.UI
         public object SyncRoot => _lock;
 
         public SnakeGameUI(SnakeWorld.SnakeWorldSize size, int tickIntervalMs = 120) : base(size)
-        {
-            _tickIntervalMs = tickIntervalMs;
-        }
-
-        public SnakeGameUI(Int32 sizeX, Int32 sizeY, int tickIntervalMs = 120) : base(sizeX,sizeY)
         {
             _tickIntervalMs = tickIntervalMs;
         }
@@ -70,8 +65,9 @@ namespace Snake.UI
                     {
                         if (aiEnabled)
                         {
-                            var nextDirection = aiController.GetNextMove(GetGameState());
-                            ChangeDirection(nextDirection);
+                            var nextMoveOut = aiController.GetNextMove(GetGameState());
+                            aiRawOutput = nextMoveOut.rawOutput;
+                            ChangeDirection(nextMoveOut.dirOut);
                         }
                         Tick();
                     }

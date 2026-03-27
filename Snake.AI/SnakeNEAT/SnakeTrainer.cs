@@ -5,7 +5,6 @@ using MicroNEAT.Core.Genome;
 using MicroNEAT.FitnessFunctions;
 using MicroNEAT.WeightInitialization;
 using Snake.Core;
-using SnakeEngine.AI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,11 +23,25 @@ namespace Snake.AI.SnakeNEAT
 
         public void Train()
         {
+            Genome bestGen = null;
+            var bestFitess = double.MinValue;
+
             var config = GetConfig();
             var algo = new NEATAlgorithm(config);
+            
+            algo.OnGenerationComplete += (gen, fitness) =>
+            {
+                Console.WriteLine($"Generation {gen} - Best Fitness: {fitness}");
+                if(fitness > bestFitess)
+                {
+                    bestFitess = fitness;
+                    bestGen = algo.GetBestGenomeFromPopulation();
+                    Console.WriteLine($"New best genome found with fitness {bestFitess}");
+                }
+            };
             algo.Run();
-            var best = algo.GetBestGenome();
-            GenomeBuilder.SaveGenome(best, "best_neat_snake.json");
+            //var best = algo.GetBestGenome();
+            GenomeBuilder.SaveGenome(bestGen, "best_neat_snake.json");
         }
 
         public void SaveTrainingData(string path)
@@ -38,12 +51,47 @@ namespace Snake.AI.SnakeNEAT
 
         public static NEATConfig GetConfig()
         {
-            IFitnessFunction fitnessFunction = new SnakeEvaluator(new SnakeGame(10, 10));
+            IFitnessFunction fitnessFunction = new SnakeEvaluator(new SnakeGame(SnakeWorld.SnakeWorldSize.Small));
             var config = new NEATConfig()
             {
                 // Network topology for Snake game
-                InputSize = 11,  // 3 danger bits + 3 tail distances + 2 food positions + 3 direction bits
-                OutputSize = 3,  // Turn left, go straight, turn right
+                InputSize = StateEncoder.InputSize,
+                OutputSize = StateEncoder.OutputSize,
+
+                ActivationFunction = new Tanh(),
+
+                Bias = 1.0,
+                ConnectBias = true,
+
+                PopulationSize = 200,
+                Generations = 200,
+                TargetFitness = 5000.0,
+                SurvivalRate = 0.2,
+
+                MutationRate = 0.8,
+                AddConnectionMutationRate = 0.05,
+                AddNodeMutationRate = 0.03,
+
+                // Speciation parameters
+                C1 = 1.0,
+                C2 = 1.0,
+                C3 = 0.4,
+                CompatibilityThreshold = 3.0,
+
+                AllowRecurrentConnections = true,
+            };
+            config.FitnessFunction = fitnessFunction;
+            return config;
+        }
+
+        public static NEATConfig GetConfigNew()
+        {
+            IFitnessFunction fitnessFunction = new SnakeEvaluator(new SnakeGame(SnakeWorld.SnakeWorldSize.Small));
+            var config = new NEATConfig()
+            {
+                // Network topology for Snake game
+                InputSize = StateEncoder.InputSize,
+                OutputSize = StateEncoder.OutputSize,
                 ActivationFunction = new Tanh(),
                 Bias = 1.0,
                 ConnectBias = true,

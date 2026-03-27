@@ -26,12 +26,7 @@ namespace Snake
     /// </summary>
     public partial class MainWindow : Window
     {
-        //private const int TickIntervalMs = 5000; //very slow
-        //private const int TickIntervalMs = 500; //slow
-        //private const int TickIntervalMs = 150; //normal
-        //private const int TickIntervalMs = 120; //faster
-        private const int TickIntervalMs = 10; // Ultra fast for testing AI
-        //private const int TickIntervalMs = 5; // Ultra fast for performance testing 
+        private int _tickIntervalMs = 150;
 
         private const bool debug = true;
 
@@ -69,8 +64,7 @@ namespace Snake
         {
             _game?.Stop();
 
-            //_game = new SnakeGameUI(Core.SnakeWorld.SnakeWorldSize.Small, TickIntervalMs);
-            _game = new SnakeGameUI(10, 10, TickIntervalMs);
+            _game = new SnakeGameUI(Core.SnakeWorld.SnakeWorldSize.Small, _tickIntervalMs);
             _game.aiEnabled = enableAI;
             if(_game.aiEnabled)
             {
@@ -183,8 +177,8 @@ namespace Snake
             ScoreText.Text = $"Score: {score}";
 
             //Update AI vision if enabled
-            var outputs = new double[3];
-            UpdateAIVision(_game.GetGameState(), outputs);
+            //var outputs = new double[3];
+            UpdateAIVision(_game.GetGameState(), _game.aiRawOutput);
         }
 
         private void DrawGrid()
@@ -347,14 +341,8 @@ namespace Snake
             }
             if (e.Key == Key.T && !_gameStarted)
             {
-                var trainerWindow = new TrainerWindow(_game);
+                var trainerWindow = new TrainerWindowV2(_game);
                 trainerWindow.ShowDialog();
-                //var res = MessageBox.Show("Training an AI can take a long time. Click OK to start training.", "AI Training", MessageBoxButton.OK, MessageBoxImage.Information);
-                //if (res == MessageBoxResult.OK)
-                //{
-                //    var t = new SnakeTrainer();
-                //    t.Train();
-                //}
                 return;
             }
             if (e.Key == Key.S && !_gameStarted)
@@ -383,6 +371,24 @@ namespace Snake
                     _game.ChangeDirection(Direction2D.Right);
                     break;
             }
+        }
+
+        private void SpeedComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (SpeedComboBox.SelectedItem is ComboBoxItem item &&
+                int.TryParse(item.Tag?.ToString(), out int ms))
+            {
+                _tickIntervalMs = ms;
+            }
+        }
+
+        private void StopButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (_game == null || !_gameStarted) return;
+
+            _game.Stop();
+            _gameStarted = false;
+            ShowOverlay("STOPPED", "Press SPACE to start a new game");
         }
 
         protected override void OnClosed(EventArgs e)

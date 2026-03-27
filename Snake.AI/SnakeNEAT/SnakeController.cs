@@ -27,15 +27,15 @@ namespace Snake.AI.SnakeNEAT
             
         }
 
-        public Direction2D GetNextMove(SnakeGameState state)
-        {
-            var input = StateEncoder.Encode(state);
-            var output = BestGen.Propagate(input);
-            int bestIdx = ArgMax(output);
-            var rel = (RelativeDirection2D)bestIdx;
-            var dir = Direction2DHelper.RelativeToDirection(state.Snake.CurrentDirection, rel);
-            return dir;
-        }
+        //public Direction2D GetNextMove(SnakeGameState state)
+        //{
+        //    var input = StateEncoder.Encode(state);
+        //    var output = BestGen.Propagate(input);
+        //    int bestIdx = ArgMax(output);
+        //    var rel = (RelativeDirection2D)bestIdx;
+        //    var dir = Direction2DHelper.RelativeToDirection(state.Snake.CurrentDirection, rel);
+        //    return dir;
+        //}
 
         private static int ArgMax(double[] arr)
         {
@@ -44,6 +44,16 @@ namespace Snake.AI.SnakeNEAT
             for (int i = 1; i < arr.Length; i++)
                 if (arr[i] > best) { best = arr[i]; idx = i; }
             return idx;
+        }
+
+        (Direction2D dirOut, double[] rawOutput) ISnakeGameController.GetNextMove(SnakeGameState state)
+        {
+            var input = StateEncoder.Encode(state);
+            var output = BestGen.Propagate(input);
+            int bestIdx = ArgMax(output);
+            var rel = (RelativeDirection2D)bestIdx;
+            var dir = Direction2DHelper.RelativeToDirection(state.Snake.CurrentDirection, rel);
+            return (dir, output);
         }
     }
 }

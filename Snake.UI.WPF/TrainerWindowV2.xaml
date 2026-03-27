@@ -1,0 +1,681 @@
+﻿<Window x:Class="Snake.AI.TrainerWindowV2"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="Snake AI Trainer v2" Height="760" Width="1100"
+        WindowStartupLocation="CenterScreen"
+        Background="{DynamicResource BrushWindowBackground}">
+
+    <Window.Resources>
+        <!-- Color Constants -->
+        <SolidColorBrush x:Key="BrushWindowBackground" Color="#1A1A2E"/>
+        <SolidColorBrush x:Key="BrushCardBackground" Color="#16213E"/>
+        <SolidColorBrush x:Key="BrushPrimary" Color="#0F3460"/>
+        <SolidColorBrush x:Key="BrushPrimaryHover" Color="#533483"/>
+        <SolidColorBrush x:Key="BrushDisabledBackground" Color="#3A3A4A"/>
+        <SolidColorBrush x:Key="BrushDisabledForeground" Color="#888888"/>
+        <SolidColorBrush x:Key="BrushDanger" Color="#C0392B"/>
+        <SolidColorBrush x:Key="BrushDangerHover" Color="#922B21"/>
+        <SolidColorBrush x:Key="BrushSuccess" Color="#1E8449"/>
+        <SolidColorBrush x:Key="BrushSuccessHover" Color="#145A32"/>
+        <SolidColorBrush x:Key="BrushAccent" Color="#E94560"/>
+        <SolidColorBrush x:Key="BrushTextPrimary" Color="White"/>
+        <SolidColorBrush x:Key="BrushTextSecondary" Color="#A0AEC0"/>
+        <SolidColorBrush x:Key="BrushTextMuted" Color="#718096"/>
+        <SolidColorBrush x:Key="BrushPanelDark" Color="#0D1B2A"/>
+        <SolidColorBrush x:Key="BrushPurpleAction" Color="#7D3C98"/>
+        <SolidColorBrush x:Key="BrushNeutralButton" Color="#4A4A5A"/>
+        <Color x:Key="ColorShadow">#000000</Color>
+
+        <!-- Card -->
+        <Style x:Key="CardStyle" TargetType="Border">
+            <Setter Property="Background" Value="{StaticResource BrushCardBackground}"/>
+            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="Padding" Value="20"/>
+            <Setter Property="Margin" Value="8"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect BlurRadius="14" ShadowDepth="3" Opacity="0.35" Color="{StaticResource ColorShadow}"/>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Primary Button -->
+        <Style x:Key="ModernButton" TargetType="Button">
+            <Setter Property="Background" Value="{StaticResource BrushPrimary}"/>
+            <Setter Property="Foreground" Value="{StaticResource BrushTextPrimary}"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Padding" Value="18,9"/>
+            <Setter Property="Margin" Value="4"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                CornerRadius="5"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="{StaticResource BrushPrimaryHover}"/>
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Background" Value="{StaticResource BrushDisabledBackground}"/>
+                    <Setter Property="Foreground" Value="{StaticResource BrushDisabledForeground}"/>
+                    <Setter Property="Cursor" Value="Arrow"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Danger Button -->
+        <Style x:Key="DangerButton" TargetType="Button" BasedOn="{StaticResource ModernButton}">
+            <Setter Property="Background" Value="{StaticResource BrushDanger}"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="{StaticResource BrushDangerHover}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Success Button -->
+        <Style x:Key="SuccessButton" TargetType="Button" BasedOn="{StaticResource ModernButton}">
+            <Setter Property="Background" Value="{StaticResource BrushSuccess}"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="{StaticResource BrushSuccessHover}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Label -->
+        <Style x:Key="LabelStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Foreground" Value="{StaticResource BrushTextSecondary}"/>
+            <Setter Property="Margin" Value="0,8,0,3"/>
+            <Setter Property="FontWeight" Value="Medium"/>
+        </Style>
+
+        <!-- Section Header -->
+        <Style x:Key="SectionHeader" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Foreground" Value="{StaticResource BrushAccent}"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Margin" Value="0,14,0,6"/>
+        </Style>
+
+        <!-- Input -->
+        <Style x:Key="InputStyle" TargetType="TextBox">
+            <Setter Property="Padding" Value="8,6"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="BorderBrush" Value="{StaticResource BrushPrimary}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Background" Value="{StaticResource BrushPanelDark}"/>
+            <Setter Property="Foreground" Value="{StaticResource BrushTextPrimary}"/>
+            <Setter Property="CaretBrush" Value="{StaticResource BrushTextPrimary}"/>
+            <Setter Property="Width" Value="90"/>
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+        </Style>
+
+        <!-- Slider -->
+        <Style x:Key="SliderStyle" TargetType="Slider">
+            <Setter Property="Margin" Value="0,4,0,0"/>
+            <Setter Property="Height" Value="22"/>
+        </Style>
+
+        <!-- Algorithm Toggle Button base -->
+        <Style x:Key="AlgoToggleBase" TargetType="ToggleButton">
+            <Setter Property="Foreground" Value="{StaticResource BrushTextSecondary}"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Padding" Value="24,10"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Background" Value="{StaticResource BrushPanelDark}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ToggleButton">
+                        <Border Background="{TemplateBinding Background}"
+                                CornerRadius="6"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsChecked" Value="True">
+                    <Setter Property="Background" Value="{StaticResource BrushAccent}"/>
+                    <Setter Property="Foreground" Value="{StaticResource BrushTextPrimary}"/>
+                </Trigger>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="{StaticResource BrushPrimaryHover}"/>
+                    <Setter Property="Foreground" Value="{StaticResource BrushTextPrimary}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <Grid Grid.Row="0" Margin="0,0,0,12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <Image x:Name="HeaderImage" Grid.Column="0"
+                   Width="52" Height="52" Margin="0,0,14,0"
+                   Stretch="Uniform" VerticalAlignment="Center"/>
+
+            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                <TextBlock Text="Snake AI Trainer"
+                           FontSize="26" FontWeight="Bold" Foreground="{StaticResource BrushTextPrimary}"/>
+                <TextBlock x:Name="SubtitleText"
+                           Text="Select an algorithm and configure parameters to begin."
+                           FontSize="12" Foreground="{StaticResource BrushTextMuted}"/>
+            </StackPanel>
+
+            <!-- Algorithm Selector -->
+            <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                <ToggleButton x:Name="QLearningToggle"
+                              Content="Q-Learning"
+                              Style="{StaticResource AlgoToggleBase}"
+                              IsChecked="True"
+                              Checked="AlgoToggle_Checked"
+                              Unchecked="AlgoToggle_Unchecked"
+                              Margin="0,0,6,0"/>
+                <ToggleButton x:Name="NEATToggle"
+                              Content="NEAT"
+                              Style="{StaticResource AlgoToggleBase}"
+                              IsChecked="False"
+                              Checked="AlgoToggle_Checked"
+                              Unchecked="AlgoToggle_Unchecked"/>
+            </StackPanel>
+        </Grid>
+
+        <!-- Main Content -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="300"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Left: Status and Model Panel -->
+            <Border Grid.Column="0" Style="{StaticResource CardStyle}">
+                <DockPanel>
+                    <!-- Robot image -->
+                    <Border DockPanel.Dock="Top"
+                            BorderBrush="{StaticResource BrushPrimary}" BorderThickness="1"
+                            CornerRadius="6" Height="110"
+                            Background="{StaticResource BrushPanelDark}" Margin="0,0,0,14">
+                        <Image x:Name="TrainingImage" Stretch="Uniform" Margin="8"/>
+                    </Border>
+
+                    <!-- Model name -->
+                    <TextBlock DockPanel.Dock="Top"
+                               x:Name="ModelNameText"
+                               FontSize="15" FontWeight="Bold" Foreground="{StaticResource BrushTextPrimary}"
+                               Text="New Model"
+                               TextWrapping="Wrap" Margin="0,0,0,4"/>
+
+                    <TextBlock DockPanel.Dock="Top"
+                               x:Name="AlgorithmBadgeText"
+                               Text="Q-Learning"
+                               FontSize="11" FontWeight="SemiBold"
+                               Foreground="{StaticResource BrushAccent}" Margin="0,0,0,14"/>
+
+                    <!-- Config name -->
+                    <TextBlock DockPanel.Dock="Top" Text="Configuration Name" Style="{StaticResource LabelStyle}" Margin="0,0,0,3"/>
+                    <TextBox DockPanel.Dock="Top"
+                             x:Name="ConfigNameTextBox"
+                             Text="MyModel"
+                             Style="{StaticResource InputStyle}"
+                             Width="240" Margin="0,0,0,14"
+                             TextChanged="ConfigNameTextBox_TextChanged"/>
+
+                    <!-- Saved model section -->
+                    <Border DockPanel.Dock="Top"
+                            Background="{StaticResource BrushPanelDark}" CornerRadius="6"
+                            Padding="12" Margin="0,0,0,10">
+                        <StackPanel>
+                            <TextBlock Text="Saved Models" Style="{StaticResource SectionHeader}" Margin="0,0,0,6"/>
+                            <Button Content="Load Model"
+                                    Style="{StaticResource ModernButton}"
+                                    Background="{StaticResource BrushPurpleAction}"
+                                    Click="LoadModelButton_Click" Margin="0,0,0,4"/>
+                            <TextBlock x:Name="LoadedModelText"
+                                       Text="No model loaded"
+                                       Foreground="{StaticResource BrushTextMuted}" FontSize="11"
+                                       TextWrapping="Wrap" Margin="0,6,0,0"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Status section -->
+                    <Border DockPanel.Dock="Top"
+                            Background="{StaticResource BrushPanelDark}" CornerRadius="6"
+                            Padding="12">
+                        <StackPanel>
+                            <TextBlock Text="Training Status" Style="{StaticResource SectionHeader}" Margin="0,0,0,6"/>
+                            <TextBlock x:Name="StatusText"
+                                       Text="Ready to train."
+                                       Foreground="{StaticResource BrushTextSecondary}" FontSize="11"
+                                       TextWrapping="Wrap"/>
+                            <!-- Progress bar -->
+                            <ProgressBar x:Name="TrainingProgress"
+                                         Minimum="0" Maximum="100" Value="0"
+                                         Height="8" Margin="0,10,0,4"
+                                         Foreground="{StaticResource BrushAccent}" Background="{StaticResource BrushCardBackground}"/>
+                            <TextBlock x:Name="ProgressText"
+                                       Text="0 / 0 episodes"
+                                       Foreground="{StaticResource BrushTextMuted}" FontSize="11"
+                                       HorizontalAlignment="Right"/>
+                        </StackPanel>
+                    </Border>
+
+                    <UIElement DockPanel.Dock="Top"/>
+                </DockPanel>
+            </Border>
+
+            <!-- Right: Training Parameters -->
+            <Border Grid.Column="1" Style="{StaticResource CardStyle}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="0"
+                               Text="Training Parameters"
+                               FontSize="17" FontWeight="Bold" Foreground="{StaticResource BrushTextPrimary}"
+                               Margin="0,0,0,10"/>
+
+                    <!-- Tab control -->
+                    <TabControl Grid.Row="1" BorderThickness="0" Background="{StaticResource BrushCardBackground}"
+                                Margin="0,4,0,0">
+
+                        <TabControl.Resources>
+                            <Style TargetType="TabItem">
+                                <Setter Property="Foreground" Value="{StaticResource BrushTextSecondary}"/>
+                                <Setter Property="FontSize" Value="13"/>
+                                <Setter Property="Padding" Value="14,7"/>
+                                <Setter Property="Background" Value="{StaticResource BrushCardBackground}"/>
+                                <Setter Property="BorderBrush" Value="{StaticResource BrushPrimary}"/>
+                                <Setter Property="BorderThickness" Value="1"/>
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="TabItem">
+                                            <Border Background="{TemplateBinding Background}"
+                                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                                    CornerRadius="6,6,0,0"
+                                                    Margin="0,0,4,0"
+                                                    Padding="{TemplateBinding Padding}">
+                                                <ContentPresenter ContentSource="Header"
+                                                                  HorizontalAlignment="Center"
+                                                                  VerticalAlignment="Center"/>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                                <Style.Triggers>
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter Property="Foreground" Value="{StaticResource BrushTextPrimary}"/>
+                                        <Setter Property="Background" Value="{StaticResource BrushPanelDark}"/>
+                                        <Setter Property="BorderBrush" Value="{StaticResource BrushAccent}"/>
+                                    </Trigger>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="{StaticResource BrushPrimaryHover}"/>
+                                        <Setter Property="Foreground" Value="{StaticResource BrushTextPrimary}"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TabControl.Resources>
+
+                        <!-- Basic Tab -->
+                        <TabItem Header="Basic">
+                            <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,10,0,0">
+                                <StackPanel>
+
+                                    <!-- Episodes -->
+                                    <TextBlock Text="Episodes" Style="{StaticResource LabelStyle}"
+                                               ToolTip="Total number of training episodes."/>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Slider x:Name="EpisodesSlider" Grid.Column="0"
+                                                Minimum="500" Maximum="200000" Value="10000"
+                                                TickFrequency="500" IsSnapToTickEnabled="True"
+                                                Style="{StaticResource SliderStyle}"
+                                                ValueChanged="EpisodesSlider_ValueChanged"/>
+                                        <TextBox x:Name="EpisodesTextBox" Grid.Column="1"
+                                                 Text="10000" Style="{StaticResource InputStyle}"
+                                                 Margin="10,0,0,0"
+                                                 TextChanged="EpisodesTextBox_TextChanged"/>
+                                    </Grid>
+
+                                    <!-- Max Steps -->
+                                    <TextBlock Text="Max Steps Per Episode" Style="{StaticResource LabelStyle}" Margin="0,14,0,3"
+                                               ToolTip="Maximum steps before an episode is force-terminated."/>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Slider x:Name="MaxStepsSlider" Grid.Column="0"
+                                                Minimum="100" Maximum="10000" Value="2000"
+                                                TickFrequency="100" IsSnapToTickEnabled="True"
+                                                Style="{StaticResource SliderStyle}"
+                                                ValueChanged="MaxStepsSlider_ValueChanged"/>
+                                        <TextBox x:Name="MaxStepsTextBox" Grid.Column="1"
+                                                 Text="2000" Style="{StaticResource InputStyle}"
+                                                 Margin="10,0,0,0"
+                                                 TextChanged="MaxStepsTextBox_TextChanged"/>
+                                    </Grid>
+
+                                    <!-- Progress Report Interval -->
+                                    <TextBlock Text="Progress Report Interval" Style="{StaticResource LabelStyle}" Margin="0,14,0,3"
+                                               ToolTip="UI is updated every N episodes during training."/>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Slider x:Name="ReportIntervalSlider" Grid.Column="0"
+                                                Minimum="10" Maximum="1000" Value="100"
+                                                TickFrequency="10" IsSnapToTickEnabled="True"
+                                                Style="{StaticResource SliderStyle}"
+                                                ValueChanged="ReportIntervalSlider_ValueChanged"/>
+                                        <TextBox x:Name="ReportIntervalTextBox" Grid.Column="1"
+                                                 Text="100" Style="{StaticResource InputStyle}"
+                                                 Margin="10,0,0,0"
+                                                 TextChanged="ReportIntervalTextBox_TextChanged"/>
+                                    </Grid>
+
+                                </StackPanel>
+                            </ScrollViewer>
+                        </TabItem>
+
+                        <!-- Q-Learning Tab -->
+                        <TabItem x:Name="QLearningTab" Header="Q-Learning">
+                            <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,10,0,0">
+                                <StackPanel>
+
+                                    <TextBlock Style="{StaticResource SectionHeader}" Text="Value Update"/>
+
+                                    <!-- Learning Rate -->
+                                    <TextBlock Text="Learning Rate (Alpha)" Style="{StaticResource LabelStyle}"
+                                               ToolTip="How quickly Q-values shift toward new experience. Typical: 0.05-0.3"/>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Slider x:Name="AlphaSlider" Grid.Column="0"
+                                                Minimum="0.001" Maximum="1.0" Value="0.1"
+                                                Style="{StaticResource SliderStyle}"
+                                                ValueChanged="AlphaSlider_ValueChanged"/>
+                                        <TextBox x:Name="AlphaTextBox" Grid.Column="1"
+                                                 Text="0.1" Style="{StaticResource InputStyle}"
+                                                 Margin="10,0,0,0"
+                                                 TextChanged="AlphaTextBox_TextChanged"/>
+                                    </Grid>
+
+                                    <!-- Discount Factor -->
+                                    <TextBlock Text="Discount Factor (Gamma)" Style="{StaticResource LabelStyle}" Margin="0,12,0,3"
+                                               ToolTip="Weight given to future rewards. Typical: 0.9-0.99"/>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Slider x:Name="GammaSlider" Grid.Column="0"
+                                                Minimum="0.0" Maximum="1.0" Value="0.95"
+                                                TickFrequency="0.01" IsSnapToTickEnabled="True"
+                                                Style="{StaticResource SliderStyle}"
+                                                ValueChanged="GammaSlider_ValueChanged"/>
+                                        <TextBox x:Name="GammaTextBox" Grid.Column="1"
+                                                 Text="0.95" Style="{StaticResource InputStyle}"
+                                                 Margin="10,0,0,0"
+                                                 TextChanged="GammaTextBox_TextChanged"/>
+                                    </Grid>
+
+                                    <TextBlock Style="{StaticResource SectionHeader}" Text="Exploration (Epsilon-Greedy)"/>
+
+                                    <!-- Epsilon Start -->
+                                    <TextBlock Text="Epsilon Start" Style="{StaticResource LabelStyle}"
+                                               ToolTip="Initial exploration probability. Start at 1.0 for full exploration."/>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Slider x:Name="EpsilonStartSlider" Grid.Column="0"
+                                                Minimum="0.0" Maximum="1.0" Value="1.0"
+                                                TickFrequency="0.01" IsSnapToTickEnabled="True"
+                                                Style="{StaticResource SliderStyle}"
+                                                ValueChanged="EpsilonStartSlider_ValueChanged"/>
+                                        <TextBox x:Name="EpsilonStartTextBox" Grid.Column="1"
+                                                 Text="1.0" Style="{StaticResource InputStyle}"
+                                                 Margin="10,0,0,0"
+                                                 TextChanged="EpsilonStartTextBox_TextChanged"/>
+                                    </Grid>
+
+                                    <!-- Epsilon Min -->
+                                    <TextBlock Text="Epsilon Min" Style="{StaticResource LabelStyle}" Margin="0,12,0,3"
+                                               ToolTip="Minimum exploration floor. Typical: 0.01-0.05"/>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Slider x:Name="EpsilonMinSlider" Grid.Column="0"
+                                                Minimum="0.0" Maximum="0.5" Value="0.01"
+                                                TickFrequency="0.01" IsSnapToTickEnabled="True"
+                                                Style="{StaticResource SliderStyle}"
+                                                ValueChanged="EpsilonMinSlider_ValueChanged"/>
+                                        <TextBox x:Name="EpsilonMinTextBox" Grid.Column="1"
+                                                 Text="0.01" Style="{StaticResource InputStyle}"
+                                                 Margin="10,0,0,0"
+                                                 TextChanged="EpsilonMinTextBox_TextChanged"/>
+                                    </Grid>
+
+                                    <!-- Epsilon Decay -->
+                                    <TextBlock Text="Epsilon Decay (per episode)" Style="{StaticResource LabelStyle}" Margin="0,12,0,3"
+                                               ToolTip="Multiplicative decay applied to epsilon after each episode. Typical: 0.990-0.999"/>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Slider x:Name="EpsilonDecaySlider" Grid.Column="0"
+                                                Minimum="0.9" Maximum="0.9999" Value="0.995"
+                                                Style="{StaticResource SliderStyle}"
+                                                ValueChanged="EpsilonDecaySlider_ValueChanged"/>
+                                        <TextBox x:Name="EpsilonDecayTextBox" Grid.Column="1"
+                                                 Text="0.995" Style="{StaticResource InputStyle}"
+                                                 Margin="10,0,0,0"
+                                                 TextChanged="EpsilonDecayTextBox_TextChanged"/>
+                                    </Grid>
+
+                                    <TextBlock Style="{StaticResource SectionHeader}" Text="Reward Shaping"/>
+
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Grid.Column="0" Margin="0,0,8,0">
+                                            <TextBlock Text="Food Reward" Style="{StaticResource LabelStyle}" ToolTip="Reward when the snake eats food."/>
+                                            <TextBox x:Name="RewardFoodTextBox" Text="10" Style="{StaticResource InputStyle}" Width="100"/>
+                                            <TextBlock Text="Death Penalty" Style="{StaticResource LabelStyle}" Margin="0,10,0,3" ToolTip="Reward (negative) on collision/death."/>
+                                            <TextBox x:Name="PenaltyDeathTextBox" Text="-10" Style="{StaticResource InputStyle}" Width="100"/>
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="1" Margin="8,0,0,0">
+                                            <TextBlock Text="Step Penalty" Style="{StaticResource LabelStyle}" ToolTip="Small penalty per step to encourage efficiency."/>
+                                            <TextBox x:Name="PenaltyStepTextBox" Text="-0.01" Style="{StaticResource InputStyle}" Width="100"/>
+                                            <TextBlock Text="Victory Reward" Style="{StaticResource LabelStyle}" Margin="0,10,0,3" ToolTip="Bonus when the snake fills the board."/>
+                                            <TextBox x:Name="RewardVictoryTextBox" Text="100" Style="{StaticResource InputStyle}" Width="100"/>
+                                        </StackPanel>
+                                    </Grid>
+
+                                </StackPanel>
+                            </ScrollViewer>
+                        </TabItem>
+
+                        <!-- NEAT Tab -->
+                        <TabItem x:Name="NEATTab" Header="NEAT">
+                            <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,10,0,0">
+                                <StackPanel>
+
+                                    <TextBlock Style="{StaticResource SectionHeader}" Text="Population"/>
+
+                                    <!-- Population Size -->
+                                    <TextBlock Text="Population Size" Style="{StaticResource LabelStyle}"
+                                               ToolTip="Number of genomes per generation. Larger = more exploration, slower."/>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Slider x:Name="PopSizeSlider" Grid.Column="0"
+                                                Minimum="20" Maximum="500" Value="200"
+                                                TickFrequency="10" IsSnapToTickEnabled="True"
+                                                Style="{StaticResource SliderStyle}"
+                                                ValueChanged="PopSizeSlider_ValueChanged"/>
+                                        <TextBox x:Name="PopSizeTextBox" Grid.Column="1"
+                                                 Text="200" Style="{StaticResource InputStyle}"
+                                                 Margin="10,0,0,0"
+                                                 TextChanged="PopSizeTextBox_TextChanged"/>
+                                    </Grid>
+
+                                    <!-- Generations (reuses Episodes slot) -->
+                                    <TextBlock Text="Generations" Style="{StaticResource LabelStyle}" Margin="0,12,0,3"
+                                               ToolTip="Total generations to evolve. Mapped from the Basic tab Episodes field."/>
+                                    <TextBlock Text="(Controlled by Basic -> Episodes)" Foreground="{StaticResource BrushTextMuted}" FontSize="11"/>
+
+                                    <TextBlock Style="{StaticResource SectionHeader}" Text="Mutation"/>
+
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Grid.Column="0" Margin="0,0,8,0">
+                                            <TextBlock Text="Weight Mutation Rate" Style="{StaticResource LabelStyle}"
+                                                       ToolTip="Probability of perturbing a connection weight per mutation event."/>
+                                            <TextBox x:Name="WeightMutRateTextBox" Text="0.8" Style="{StaticResource InputStyle}" Width="100"/>
+
+                                            <TextBlock Text="Add Connection Rate" Style="{StaticResource LabelStyle}" Margin="0,10,0,3"
+                                                       ToolTip="Probability of adding a new connection during structural mutation."/>
+                                            <TextBox x:Name="AddConnRateTextBox" Text="0.1" Style="{StaticResource InputStyle}" Width="100"/>
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="1" Margin="8,0,0,0">
+                                            <TextBlock Text="Add Node Rate" Style="{StaticResource LabelStyle}"
+                                                       ToolTip="Probability of inserting a new hidden node during structural mutation."/>
+                                            <TextBox x:Name="AddNodeRateTextBox" Text="0.05" Style="{StaticResource InputStyle}" Width="100"/>
+
+                                            <TextBlock Text="Recurrent Connection Rate" Style="{StaticResource LabelStyle}" Margin="0,10,0,3"
+                                                       ToolTip="Fraction of connections that may be recurrent."/>
+                                            <TextBox x:Name="RecurrentRateTextBox" Text="0.3" Style="{StaticResource InputStyle}" Width="100"/>
+                                        </StackPanel>
+                                    </Grid>
+
+                                    <TextBlock Style="{StaticResource SectionHeader}" Text="Speciation"/>
+
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Grid.Column="0" Margin="0,0,8,0">
+                                            <TextBlock Text="Compatibility Threshold" Style="{StaticResource LabelStyle}"
+                                                       ToolTip="Genetic distance above which two genomes are in different species."/>
+                                            <TextBox x:Name="CompatThresholdTextBox" Text="3.0" Style="{StaticResource InputStyle}" Width="100"/>
+
+                                            <TextBlock Text="Survival Rate" Style="{StaticResource LabelStyle}" Margin="0,10,0,3"
+                                                       ToolTip="Fraction of each species allowed to reproduce."/>
+                                            <TextBox x:Name="SurvivalRateTextBox" Text="0.2" Style="{StaticResource InputStyle}" Width="100"/>
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="1" Margin="8,0,0,0">
+                                            <TextBlock Text="Stagnation Limit" Style="{StaticResource LabelStyle}"
+                                                       ToolTip="Generations without improvement before a species is culled."/>
+                                            <TextBox x:Name="StagnationLimitTextBox" Text="30" Style="{StaticResource InputStyle}" Width="100"/>
+
+                                            <TextBlock Text="Elite Count" Style="{StaticResource LabelStyle}" Margin="0,10,0,3"
+                                                       ToolTip="Number of top genomes preserved unchanged each generation."/>
+                                            <TextBox x:Name="EliteCountTextBox" Text="15" Style="{StaticResource InputStyle}" Width="100"/>
+                                        </StackPanel>
+                                    </Grid>
+
+                                    <TextBlock Style="{StaticResource SectionHeader}" Text="Target Fitness"/>
+                                    <TextBlock Text="Target Fitness (stop early)" Style="{StaticResource LabelStyle}"
+                                               ToolTip="Training stops when the best genome reaches this fitness."/>
+                                    <TextBox x:Name="TargetFitnessTextBox" Text="5000" Style="{StaticResource InputStyle}" Width="140"/>
+
+                                </StackPanel>
+                            </ScrollViewer>
+                        </TabItem>
+
+                        <!-- Log Tab -->
+                        <TabItem Header="Log">
+                            <ScrollViewer x:Name="LogScrollViewer"
+                                          VerticalScrollBarVisibility="Auto"
+                                          Margin="0,10,0,0">
+                                <TextBox x:Name="LogTextBox"
+                                         IsReadOnly="True"
+                                         TextWrapping="Wrap"
+                                         Background="{StaticResource BrushPanelDark}"
+                                         Foreground="{StaticResource BrushTextSecondary}"
+                                         FontFamily="Consolas"
+                                         FontSize="11"
+                                         BorderThickness="0"
+                                         AcceptsReturn="True"
+                                         VerticalScrollBarVisibility="Disabled"/>
+                            </ScrollViewer>
+                        </TabItem>
+
+                    </TabControl>
+
+                    <!-- Action buttons -->
+                    <StackPanel Grid.Row="2" Orientation="Horizontal"
+                                HorizontalAlignment="Right" Margin="0,14,0,0">
+                        <Button Content="Back"
+                                Style="{StaticResource ModernButton}"
+                                Background="{StaticResource BrushNeutralButton}"
+                                Height="40"
+                                Click="BackButton_Click"/>
+                        <Button x:Name="StopTrainingButton"
+                                Content="Stop"
+                                Style="{StaticResource DangerButton}"
+                                Height="40"
+                                IsEnabled="False"
+                                Click="StopTrainingButton_Click"/>
+                        <Button x:Name="StartTrainingButton"
+                                Content="Start Training"
+                                Style="{StaticResource SuccessButton}"
+                                Height="40"
+                                Click="StartTrainingButton_Click"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
+</Window>

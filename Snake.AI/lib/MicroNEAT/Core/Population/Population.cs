@@ -182,13 +182,23 @@ public class Population
     }
 
     /// <summary>
-    /// Evaluates the fitness of each genome in the population.
+    /// Evaluates the fitness of each genome in the population in parallel.
     /// </summary>
-    public void EvaluatePopulation()
+    public void EvaluatePopulation(bool parallel = true)
     {
-        foreach (var genome in Genomes)
+        if (parallel)
         {
-            genome.EvaluateFitness();
+            Parallel.ForEach(Genomes, genome =>
+            {
+                genome.EvaluateFitness();
+            });
+        }
+        else
+        {
+            foreach (var genome in Genomes)
+            {
+                genome.EvaluateFitness();
+            }
         }
     }
 

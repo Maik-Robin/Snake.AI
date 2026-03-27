@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SnakeEngine.AI
+namespace Snake.AI
 {
     public interface IGameTrainer
     {

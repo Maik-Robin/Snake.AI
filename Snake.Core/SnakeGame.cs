@@ -30,6 +30,11 @@ namespace Snake.Core
         public SnakeWorld World { get; set; }
 
         /// <summary>
+        /// Gets or sets the size of the game world, which determines the dimensions of the playing area.
+        /// </summary>
+        public SnakeWorld.SnakeWorldSize WorldSize { get; set; }
+
+        /// <summary>
         /// Gets or sets the score value.
         /// </summary>
         public int Score { get; set; }
@@ -83,7 +88,7 @@ namespace Snake.Core
         /// <param name="size">The size of the game world to create. Determines the dimensions of the playing area.</param>
         public SnakeGame(SnakeWorld.SnakeWorldSize size) : this( Convert.ToInt32(size), Convert.ToInt32(size))
         {
-                
+            WorldSize = size;
         }
 
         /// <summary>
@@ -93,7 +98,7 @@ namespace Snake.Core
         /// score is set to zero, and the game is not over or won at initialization.</remarks>
         /// <param name="sizeX">The width of the game world, in cells. Must be greater than zero.</param>
         /// <param name="sizeY">The height of the game world, in cells. Must be greater than zero.</param>
-        public SnakeGame(Int32 sizeX, Int32 sizeY)
+        private SnakeGame(Int32 sizeX, Int32 sizeY)
         {
             World = new SnakeWorld(sizeX,sizeY);
             Score = 0;
@@ -247,6 +252,13 @@ namespace Snake.Core
         {
             ResetWorld();
             return GetGameState();
+        }
+
+        public ISnakeGameEnvironment Clone()
+        {
+            var clone = new SnakeGame(this.WorldSize);
+            clone.Reset();
+            return clone;
         }
     }
 }

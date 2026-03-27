@@ -1,7 +1,5 @@
 using Game.Core;
 using Microsoft.Win32;
-using SnakeEngine;
-using SnakeEngine.AI;
 using System;
 using System.Globalization;
 using System.IO;

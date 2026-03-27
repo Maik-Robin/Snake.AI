@@ -47,6 +47,10 @@ dotnet build
 dotnet run --project Snake.UI.WPF/Snake.UI.csproj
 ```
 
+## Screenshots
+
+![Snake Won](Snake.UI.WPF/assets/Snake-Won.png)
+
 ## Features
 
 ### Game Mechanics
@@ -65,7 +69,6 @@ dotnet run --project Snake.UI.WPF/Snake.UI.csproj
   - Displays up to 30 inputs and 10 outputs
   - Color-coded input categories
   - Progress bars showing normalized values
-  - See [Snake.UI.WPF/Controls/AIVisionControl_README.md](Snake.UI.WPF/Controls/AIVisionControl_README.md) for detailed documentation
 
 ## Architecture
 

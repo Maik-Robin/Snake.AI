@@ -9,7 +9,7 @@ namespace Snake.AI
 {
     public interface ISnakeGameController
     {
-        Direction2D GetNextMove(SnakeGameState state);
+        (Direction2D dirOut, double[] rawOutput) GetNextMove(SnakeGameState state);
     }
 
 }

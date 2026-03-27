@@ -24,6 +24,13 @@ namespace Snake.Core
         /// <returns>A <see cref="SnakeGameState"/> representing the initial state of the game after the reset.</returns>
         SnakeGameState Reset();
 
+
+        /// <summary>
+        /// Clones the current game environment, creating a new instance with the same state and properties.
+        /// </summary>
+        /// <returns>A new clone of the environment</returns>
+        ISnakeGameEnvironment Clone();
+
         /// <summary>
         /// Advances the game state by one step using the specified movement direction.
         /// </summary>
